@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+			<meta charset="UTF-8">
+			<title>ADM User support tools</title>
+			<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+			<link rel="stylesheet" href="/userrequest/css/fileinput.min.css" media="all"  type="text/css" />
+			<link rel="stylesheet" href="/userrequest/css/bootstrap-select.min.css" media="all"  type="text/css" />
+			<link rel="stylesheet" href="/userrequest/css/jquery-te-1.4.0.css" media="all"  type="text/css" />
+			<link rel="stylesheet" href="/userrequest/css/personal.css" media="all"  type="text/css" />
+			<!-- <link href="http://netdna.bootstrapcdn.com/font-awesome/3.0.2/css/font-awesome.css" rel="stylesheet"> -->
+			
+			
+			<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+			<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+			<script src="/userrequest/js/fileinput.min.js" type="text/javascript"></script>
+			<script src="/userrequest/js/bootstrap-select.min.js" type="text/javascript"></script>
+			<script src="/userrequest/js/jquery-te-1.4.0.min.js"></script>
+			<script src="/userrequest/js/jquery.base64.min.js"></script>
+			<script src="/userrequest/js/static_values.js"></script>
+
+			<script>
+				   
+			    $( document ).ready(function() {
+			        // http://plugins.krajee.com/file-input/demo
+			        $("#filebutton").fileinput({'showUpload':false, 'previewFileType':'any'});
+			
+			        // http://silviomoreto.github.io/bootstrap-select/3/
+			        $('.selectpicker').selectpicker();
+					    
+					    $("#userRequest").submit(function(e){
+					    	var myFormData = new FormData(this);
+						    $.ajax({
+						           type: "POST",
+						           url: "set_request.php",
+						           data: myFormData,
+						           processData: false,
+      								 contentType: false,
+      								 success: function(data){
+						               alert(data);
+						           }
+						    });
+						   	e.preventDefault();
+						  });
+			
+			        $(".details_editor").jqte({fsize: false, format: false});
+			        
+			        $( "#support" ).change(function() {
+			        	$('#application_code').empty();
+			        	$('#request_domain').empty();
+			        	
+								$.each(my_static_value["application_code_" + this.value], function( key, value ) {
+						    	$("#application_code").append(value);
+						    });
+						    $('#application_code').selectpicker('refresh');
+						    
+						    $.each(my_static_value["request_domain_" + this.value], function( key, value ) {
+						    	$("#request_domain").append(value);
+						    });
+						    $('#request_domain').selectpicker('refresh');
+							});
+			    });
+			    
+			</script>
+    </head>
+    <body>
+        <div class="container">
+            <div class="row clearfix">
+                <div class="col-md-12 column">
+                    <div class="jumbotron">
+                        <h1>
+                            ADM BI Technical User support.
+                        </h1>
+                        <p>
+                            You have a question or a thechnical request?
+                            <br>Feel free to contact us.
+                            <br>
+                            <br>For an incident, please, contact the HelpDesk. (<span style="color: red;">82000</span>)
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row clearfix">
+                <div class="col-md-12 column">
+                    <form id="userRequest" name="userrequest_form" class="form-horizontal" action="set_request.php" enctype="multipart/form-data" method="post">
+                        <!-- Select Basic -->
+                        <div class="control-group">
+                          <label class="control-label" for="application_code">User support Team you want to contact</label>
+                          <div class="controls">
+                            <select id="support" name="support" class="selectpicker" title="" data-width="100%">
+                              <option data-hidden="true"></option>
+                            </select>
+                          </div>
+                        </div>
+
+                        <!-- Text input-->
+                        <div class="control-group">
+                          <label class="control-label" for="user_name">Your first name and your name</label>
+                          <div class="controls">
+                            <input id="user_name" name="user_name" type="text" placeholder="" class="form-control" required="">
+
+                          </div>
+                        </div>
+
+                        <!-- Text input-->
+                        <div class="control-group">
+                          <label class="control-label" for="user_id">Your user id : gxxxxx / uxxxxx / ixxxxx</label>
+                          <div class="controls">
+                            <input id="user_id" name="user_id" type="text" placeholder="" class="form-control" required="">
+                          </div>
+                        </div>
+                        
+                        <!-- Text input-->
+                        <div class="control-group">
+                          <label class="control-label" for="user_id">Your e-mail adress</label>
+                          <div class="controls">
+                            <input id="email" name="email" type="text" placeholder="" class="form-control" required="">
+                          </div>
+                        </div>
+                        
+                        <!-- Text input-->
+                        <div class="control-group">
+                          <label class="control-label" for="user_id">Your direct phone number</label>
+                          <div class="controls">
+                            <input id="phone" name="phone" type="text" placeholder="" class="form-control" required="">
+                          </div>
+                        </div>
+
+                        <!-- Select Basic -->
+                        <div class="control-group">
+                          <label class="control-label" for="application_code">Application code (used for rebilling)</label>
+                          <div class="controls">
+                            <select id="application_code" name="application_code" class="selectpicker" title="" data-width="100%">
+                            </select>
+                          </div>
+                        </div>
+
+                        <!-- Select Basic -->
+                        <div class="control-group">
+                          <label class="control-label" for="request_domain">User request categoy</label>
+                          <div class="controls">
+                            <select id="request_domain" name="request_domain" class="selectpicker" title="" data-width="100%">
+                            </select>
+                          </div>
+                        </div>
+
+                        <!-- Textarea -->
+                        <div class="control-group">
+                          <label class="control-label" for="textarea">User request description</label>
+                          <div class="controls">
+                            <textarea id="details" name="details" class="details_editor form-control" style="height: 145px;"></textarea>
+                          </div>
+                        </div>
+
+                        <!-- File Button --> 
+                        <div class="control-group">
+                          <label class="control-label" for="filebutton">Upload file</label>
+                          <div class="controls">
+                            <!-- <input id="filebutton" name="filebutton" class="input-file" type="file"> -->
+                            <input id="filebutton" type="file" class="file" name="files" data-preview-file-type="text" multiple>
+                          </div>
+                        </div>
+
+                        <!-- Button -->
+                        <div class="control-group">
+                          <label class="control-label" for="submit"></label>
+                          <div class="controls">
+                            <button id="submit" name="submit" class="btn btn-primary">Submit my request</button>
+                          </div>
+                        </div>
+
+                    </form>
+                </div>
+                <!--
+                <div class="col-md-4 column personal_faq">
+                	<label class="control-label" for="submit">Solution for similar request.</label>
+              	</div>
+              	-->
+            </div>
+        </div>
+
+        <script>
+          $.each(my_static_value["support"], function( key, value ) {
+			    	$("#support").append(value);
+			    });
+			    
+			    $.each(my_static_value["application_code_empty"], function( key, value ) {
+			    	$("#application_code").append(value);
+			    });
+			    
+			    $.each(my_static_value["request_domain_empty"], function( key, value ) {
+			    	$("#request_domain").append(value);
+			    });
+        </script>
+        
+        <SCRIPT LANGUAGE="VBScript"> 
+					<!--
+					   Function getRegistryValue()
+					      Dim WSHShell, value_givenName, value_Name, value_userId, value_mail, value_telephoneNumber
+					
+						    On Error Resume Next
+						    Set WSHShell = CreateObject("WScript.Shell")
+						    value_givenName = WSHShell.RegRead("HKEY_CURRENT_USER\SOFTWARE\Fortis\UserInfo\givenName")
+						    value_Name = WSHShell.RegRead("HKEY_CURRENT_USER\SOFTWARE\Fortis\UserInfo\sn")
+						    value_userId = WSHShell.RegRead("HKEY_CURRENT_USER\SOFTWARE\Fortis\UserInfo\cn")
+						    value_mail = WSHShell.RegRead("HKEY_CURRENT_USER\SOFTWARE\Fortis\UserInfo\mail")
+						    value_telephoneNumber = WSHShell.RegRead("HKEY_CURRENT_USER\SOFTWARE\Fortis\UserInfo\telephoneNumber")
+						    
+						    document.userrequest_form.user_name.value = value_givenName + " " + value_Name
+						    document.userrequest_form.user_id.value = value_userId
+						    document.userrequest_form.email.value = value_mail
+						    document.userrequest_form.phone.value = value_telephoneNumber
+
+						
+						    if err.number <> 0 then
+						        readFromRegistry= strDefault
+						    else
+						        readFromRegistry=value
+						    end if
+						
+						    set WSHShell = nothing
+					   End Function
+					   
+					   getRegistryValue
+					-->
+				</SCRIPT>
+    </body>
+</html>

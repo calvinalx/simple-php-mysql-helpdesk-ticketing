@@ -1,0 +1,14 @@
+.personal_faq{
+	padding-top: 5px;
+	color: inherit;
+	border-left: 1px solid silver;
+}
+
+.jumbotron{
+	padding-top: 13px;
+	padding-bottom: 13px;
+}
+
+.selected {
+  background-color: #abb9d3;
+}
