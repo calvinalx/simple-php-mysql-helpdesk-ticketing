@@ -53,7 +53,7 @@
 			die("Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error);
 		}else{				
 			//Insert a log row
-			$sqlquery = "INSERT INTO request VALUES('','" . urlencode($_POST['support']) . "','" . urlencode($_POST['user_name']) . "','" . urlencode($_POST['user_id']) . "','" . urlencode($_POST['email']) . "','" . urlencode($_POST['application_code']) . "','" . urlencode($_POST['request_domain']) . "','" . urlencode($_POST['details']) . "', $last_file_insert_ID)";
+			$sqlquery = "INSERT INTO request VALUES('','" . urlencode($_POST['support']) . "','" . urlencode($_POST['user_name']) . "','" . urlencode($_POST['user_id']) . "','" . urlencode($_POST['email']) . "','" . urlencode($_POST['application_code']) . "','" . urlencode($_POST['request_domain']) . "','" . urlencode($_POST['details']) . "', $last_file_insert_ID, '')";
 			$result = $mysqli->query($sqlquery);
 			mysqli_close($mysqli);
 		}

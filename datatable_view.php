@@ -24,29 +24,60 @@
 			<title>ADM BI User request list</title>
 			<link rel="stylesheet" href="/userrequest/css/bootstrap.min.css">
 			<link rel="stylesheet" href="//cdn.datatables.net/plug-ins/be7019ee387/integration/bootstrap/3/dataTables.bootstrap.css">
+			<link rel="stylesheet" href="/userrequest/css/bootstrap-select.min.css" media="all"  type="text/css" />
 			<link rel="stylesheet" href="/userrequest/css/personal.css">
 			
 			<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 			<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js" type="text/javascript"></script>
+			<script src="/userrequest/js/bootstrap-select.min.js" type="text/javascript"></script>
 			<script type="text/javascript" language="javascript" src="//cdn.datatables.net/1.10.1/js/jquery.dataTables.min.js"></script>
 			<script src="//cdn.datatables.net/plug-ins/be7019ee387/integration/bootstrap/3/dataTables.bootstrap.js"></script>
+			<script src="/userrequest/js/static_values.json"></script>
 						
 			<script>
 			    $( document ).ready(function() {
-			    	$('#userRequestList').dataTable();
+			    	// http://silviomoreto.github.io/bootstrap-select/3/
+			      $('.selectpicker').selectpicker();
 			    	
-			    	/*$('#userRequestList tbody').on( 'click', 'tr', function () {
-				    	$(this).toggleClass('selected');
-				    });*/
-				 
-				    /*$('#button').click( function () {
-				    	alert( table.rows('.selected').data().length +' row(s) selected' );
-				    });*/
+			    	var selected_assign = my_static_value["assign"][0];
+			    	var table_row_datas = "";
+			    	
+			    	var usr_request_table = $('#userRequestList').DataTable({
+				    	"columnDefs": [
+					      {
+					      	"targets": [ 0 ],
+					        "visible": false,
+					        "searchable": false
+					      },
+					      {
+					      	"targets": [ 4 ],
+					        "visible": false,
+					        "searchable": false
+					      }
+				      ]
+				    });
 				    
-				    $('#userRequestList td').click( function () {
+				    $('#assign_button').click(function() {
+							selected_assign = $("#assign_id option:selected").val();
+							update_assign(table_row_datas[0], selected_assign);
+							$('#myModal').modal('hide');
+						});
+				    
+				    $.each(my_static_value["assign"], function( key, value ) {
+				    	$("#assign_id").append(value);
+				    });
+				    $('#assign_id').selectpicker('refresh');
+				    			    					
+						$('#userRequestList tbody').on( 'click', 'tr', function () {
+							table_row_datas = usr_request_table.row( this ).data();
 							$('#myModal').modal('show');
 						});
+
 			    });
+			    
+			    function update_assign(row_id, assign_id){
+						alert(row_id + " " + assign_id);
+					}
 			</script>
     </head>
     <body>
@@ -66,31 +97,33 @@
 						<table id="userRequestList" class="table table-striped table-bordered dataTable no-footer" cellspacing="0" width="100%" role="grid" aria-describedby="example_info" style="width: 100%;">
 							<thead>
 			  				<tr>
+			  					<th>id</th>
 									<th>Support</th>
-									<th>User name</th>
-									<th>User id</th>
-									<th>Email</th>
+									<th>Requester</th>
+									<!-- <th>User id</th> -->
+									<!-- <th>Email</th> -->
 									<th>Rebilling code</th>
 									<th>Subject</th>
 									<th>Request</th>
+									<th>Assigned</th>
 								</tr>
 							</thead>
 							<tbody>
-								<?php
-								
+							<?php
 								while ($row = mysqli_fetch_array($result)) {
 								    echo "<tr>";
+								    echo "<td>" . urldecode($row["id"]) . "</td>";
 								    echo "<td>" . urldecode($row["support_line"]) . "</td>";
 								    echo "<td>" . urldecode($row["user_name"]) . "</td>";
-								    echo "<td>" . urldecode($row["user_id"]) . "</td>";
-								    echo "<td>" . urldecode($row["email"]) . "</td>";
+								    /*echo "<td>" . urldecode($row["user_id"]) . "</td>";*/
+								    /*echo "<td>" . urldecode($row["email"]) . "</td>";*/
 								    echo "<td>" . urldecode($row["application_code"]) . "</td>";
 								    echo "<td>" . urldecode($row["request_domain"]) . "</td>";
 								    echo "<td>" . urldecode($row["details"]) . "</td>";
+								    echo "<td>" . urldecode($row["assigned"]) . "</td>";
 								    echo "</tr>";
 								}
-								
-								?>
+							?>
 							</tbody>
 						</table>
 					</div>
@@ -103,15 +136,22 @@
 			        <div class="modal-content">
 			            <div class="modal-header">
 			                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-			                <h4 class="modal-title">Assign</h4>
+			                <h4 class="modal-title">Assign this task to:</h4>
 			            </div>
 			            <div class="modal-body">
-			                <p>Select a person on the list to assign this task</p>
-			                <p class="text-warning"><small>By default your UserId is already selected</small></p>
+			                <p id="modal_body_txt"></p>
+			                
+			                <!-- Select Basic -->
+                      <div class="control-group">
+                        <div class="controls">
+                          <select id="assign_id" name="assign_id" class="selectpicker" title="" data-width="100%">
+                          </select>
+                        </div>
+                      </div>
 			            </div>
 			            <div class="modal-footer">
 			                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-			                <button type="button" class="btn btn-primary">Assign</button>
+			                <button type="button" id="assign_button" class="btn btn-primary">Assign</button>
 			            </div>
 			        </div>
 			    </div>
