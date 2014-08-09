@@ -30,7 +30,8 @@
 			<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 			<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js" type="text/javascript"></script>
 			<script src="/userrequest/js/bootstrap-select.min.js" type="text/javascript"></script>
-			<script type="text/javascript" language="javascript" src="//cdn.datatables.net/1.10.1/js/jquery.dataTables.min.js"></script>
+			<!-- <script type="text/javascript" charset="utf8" src="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.0/jquery.dataTables.min.js"></script> -->
+			<script type="text/javascript" language="javascript" src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
 			<script src="//cdn.datatables.net/plug-ins/be7019ee387/integration/bootstrap/3/dataTables.bootstrap.js"></script>
 			<script src="/userrequest/js/static_values.json"></script>
 						
@@ -41,8 +42,10 @@
 			    	
 			    	var selected_assign = my_static_value["assign"][0];
 			    	var table_row_datas = "";
+			    	var aPos;
+			    	var aData;
 			    	
-			    	var usr_request_table = $('#userRequestList').DataTable({
+			    	var oTable = $('#userRequestList').dataTable({
 				    	"columnDefs": [
 					      {
 					      	"targets": [ 0 ],
@@ -59,7 +62,7 @@
 				    
 				    $('#assign_button').click(function() {
 							selected_assign = $("#assign_id option:selected").val();
-							update_assign(table_row_datas[0], selected_assign);
+							update_assign(table_row_datas[0], selected_assign, aPos, oTable);
 							$('#myModal').modal('hide');
 						});
 				    
@@ -69,14 +72,27 @@
 				    $('#assign_id').selectpicker('refresh');
 				    			    					
 						$('#userRequestList tbody').on( 'click', 'tr', function () {
-							table_row_datas = usr_request_table.row( this ).data();
+							aPos = oTable.fnGetPosition( this );
+							if(aPos!=null){
+								table_row_datas = oTable.fnGetData( aPos );//get data of the clicked row
+							}
 							$('#myModal').modal('show');
 						});
 
 			    });
 			    
-			    function update_assign(row_id, assign_id){
-						alert(row_id + " " + assign_id);
+			    function update_assign(row_id, assign_id, aPos, oTable){
+						/*alert(row_id + " " + assign_id);*/
+									    
+				    $.ajax({
+					    type: 'POST',
+					    url: 'assign.php',
+					    data: {'row_id': row_id, 'assign_id': assign_id},
+					    success: function(msg) {
+					      /*$('#userRequestList').dataTable().fnUpdate(assign_id , parseInt(aPos), 4, false, false);*/
+					      oTable.fnUpdate(assign_id , parseInt(aPos), 6);
+					    }
+					  });
 					}
 			</script>
     </head>
